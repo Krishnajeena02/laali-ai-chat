@@ -155,7 +155,7 @@ export default function ChatScreen() {
         </div>
 
         <p className="text-center text-[10px] text-pink-400/25 pb-3">
-          Made with 💕 for Laali • Powered by Groq AI
+          Made with 💕 By  Krishna Singh Jeena • Powered by Gemini AI
         </p>
       </div>
 
