@@ -2,34 +2,68 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import laaliImg from "../assets/WhatsApp Image 2026-03-08 at 2.10.25 AM (1).jpeg";
+import MusicPlayer from "../components/MusicPlayer";
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 const SUGGESTIONS = [
-  "Laali, kaisi ho? 🌸",
+  "Laali, kas chhe tu? 🌸",
   "Kuch sunao apne gaon ke baare mein 🏔️",
   "Mujhe Kumaoni mein kuch sikho 😄",
-  "Aaj ka din kaisa raha? ☀️",
+  "Aaj din kas go? ☀️",
 ];
+
+function FloatingHearts() {
+  const hearts = Array.from({ length: 12 }, (_, i) => ({
+    id: i,
+    left: `${8 + i * 7.5}%`,
+    delay: `${i * 0.9}s`,
+    dur: `${8 + (i % 4) * 2}s`,
+    size: i % 3 === 0 ? 14 : i % 3 === 1 ? 10 : 8,
+    opacity: i % 3 === 0 ? 0.12 : 0.07,
+  }));
+  return (
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      {hearts.map((h) => (
+        <div key={h.id} style={{
+          position: "absolute", left: h.left, bottom: "-30px",
+          fontSize: h.size, opacity: h.opacity,
+          animation: `floatUp ${h.dur} ${h.delay} ease-in infinite`,
+          color: "red",
+        }}>♥</div>
+      ))}
+    </div>
+  );
+}
+
+function Avatar({ className = "" }) {
+  return (
+    <img src={laaliImg} alt="Laali"
+      className={`rounded-full object-cover object-top block ${className}`}
+      onError={(e) => { e.target.src = "https://ui-avatars.com/api/?name=Laali&background=c83c64&color=fff&size=100"; }}
+    />
+  );
+}
 
 export default function ChatScreen() {
   const navigate = useNavigate();
   const name = localStorage.getItem("laali_user");
 
-  useEffect(() => {
-    if (!name) navigate("/");
-  }, [name, navigate]);
+  useEffect(() => { if (!name) navigate("/"); }, [name, navigate]);
 
-  const [messages, setMessages] = useState([
-    {
-      role: "model",
-      text: `Namaskaar ${name}! 🌸 Main Laali hoon Uttarakhand ki pahadon se 🏔️ Kaisa chha tum? 😊`,
-    },
-  ]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [typing, setTyping] = useState(false);
-  const bottomRef = useRef(null);
-  const inputRef = useRef(null);
+  const [messages, setMessages] = useState([{
+    role: "model",
+    text: `hey ${name} Laata 🌸 Main Laali chhu bageshwer bati 🏔️ tu kak chhe, kacchu ghar ke chhu dhinay? 😊`,
+  }]);
+  const [input, setInput]       = useState("");
+  const [loading, setLoading]   = useState(false);
+  const [typing, setTyping]     = useState(false);
+  const [lastUserMsg, setLastUserMsg] = useState("");
+
+  const bottomRef  = useRef(null);
+  const inputRef   = useRef(null);
+  const musicRef   = useRef(null); // ref to MusicPlayer
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -39,7 +73,11 @@ export default function ChatScreen() {
     const msg = text || input.trim();
     if (!msg || loading) return;
 
+    // trigger default music on first interaction
+    musicRef.current?.startMusicOnce();
+
     setMessages((prev) => [...prev, { role: "user", text: msg }]);
+    setLastUserMsg(msg); // passed to MusicPlayer for keyword detection
     setInput("");
     setLoading(true);
     setTyping(true);
@@ -48,7 +86,10 @@ export default function ChatScreen() {
       const res = await axios.post(`${API_URL}/api/chat`, { name, message: msg });
       setMessages((prev) => [...prev, { role: "model", text: res.data.reply }]);
     } catch {
-      setMessages((prev) => [...prev, { role: "model", text: "Arre! Kuch gadbad ho gayi 😅 Phir se try karo!" }]);
+      setMessages((prev) => [...prev, {
+        role: "model",
+        text: "Arre! krishna iduge baat kariye karau ab ni karun mi baat 😅",
+      }]);
     } finally {
       setTyping(false);
       setLoading(false);
@@ -57,114 +98,160 @@ export default function ChatScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a0a2e] via-[#2d0a3e] to-[#1a1a4e] flex items-center justify-center p-4 relative overflow-hidden">
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:wght@700&display=swap');
+        @keyframes floatUp {
+          0%   { transform: translateY(0) scale(1); opacity: 0; }
+          10%  { opacity: 1; }
+          90%  { opacity: 0.6; }
+          100% { transform: translateY(-100vh) scale(1.4); opacity: 0; }
+        }
+        @keyframes dotPulse {
+          0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+          40%            { transform: scale(1); opacity: 1; }
+        }
+        @keyframes barBounce1 { from { height: 20%; } to { height: 80%; } }
+        @keyframes barBounce2 { from { height: 40%; } to { height: 100%; } }
+        @keyframes barBounce3 { from { height: 30%; } to { height: 90%; } }
+        @keyframes barBounce4 { from { height: 50%; } to { height: 70%; } }
+        @keyframes nowPlaying {
+          0%   { opacity: 0; transform: translateY(-8px); }
+          15%  { opacity: 1; transform: translateY(0); }
+          80%  { opacity: 1; }
+          100% { opacity: 0; }
+        }
+        .dot-pulse   { animation: dotPulse 1.4s ease-in-out infinite; }
+        .now-playing { animation: nowPlaying 4s ease forwards; }
+        body { font-family: 'DM Sans', sans-serif; }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(200,60,100,0.2); border-radius: 2px; }
+      `}</style>
 
-      {/* bg blobs */}
-      <div className="fixed top-[-100px] right-[-100px] w-96 h-96 rounded-full bg-pink-500/10 blur-3xl pointer-events-none animate-pulse" />
-      <div className="fixed bottom-[-80px] left-[-80px] w-80 h-80 rounded-full bg-purple-500/10 blur-3xl pointer-events-none animate-pulse" />
+      <div className="min-h-screen min-h-[100dvh] bg-[#080808] flex items-center justify-center sm:p-4 relative overflow-hidden">
 
-      {/* chat box */}
-      <div className="w-full max-w-[500px] h-[90vh] max-h-[720px] flex flex-col rounded-3xl border border-pink-500/10 bg-white/[0.04] backdrop-blur-xl shadow-2xl overflow-hidden z-10">
+        <div className="hidden sm:block fixed -top-28 -right-28 w-[420px] h-[420px] rounded-full pointer-events-none z-0"
+          style={{ background: "radial-gradient(circle, rgba(200,60,100,0.10) 0%, transparent 70%)" }} />
+        <div className="hidden sm:block fixed -bottom-24 -left-24 w-[380px] h-[380px] rounded-full pointer-events-none z-0"
+          style={{ background: "radial-gradient(circle, rgba(160,40,80,0.08) 0%, transparent 70%)" }} />
 
-        {/* header */}
-        <div className="flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-pink-500/10 to-purple-500/10 border-b border-pink-500/10">
-          <div className="relative">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-2xl shadow-lg shadow-pink-500/30">
-              🌸
+        <FloatingHearts />
+
+        <div
+          className="relative z-10 w-full flex flex-col bg-[#0f0f0f] border-white/[0.07]
+            h-[100dvh] rounded-none border-0
+            sm:h-[90vh] sm:max-h-[720px] sm:max-w-[500px] sm:rounded-[28px] sm:border"
+          style={{ boxShadow: "0 0 0 1px rgba(200,60,100,0.1), 0 30px 80px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05)" }}
+        >
+
+          {/* HEADER */}
+          <div className="flex items-center gap-3 px-4 py-3 sm:px-5 sm:py-5 flex-shrink-0 border-b border-white/[0.05]"
+            style={{ background: "linear-gradient(180deg, rgba(200,60,100,0.06) 0%, transparent 100%)" }}>
+            <div className="relative flex-shrink-0">
+              <Avatar className="w-10 h-10 sm:w-[50px] sm:h-[50px] border-[1.5px] border-[rgba(200,60,100,0.4)]" />
+              <span className="absolute bottom-0.5 right-0.5 w-[9px] h-[9px] sm:w-[11px] sm:h-[11px] bg-[#3ecf6a] rounded-full border-2 border-[#0f0f0f]"
+                style={{ boxShadow: "0 0 6px #3ecf6a" }} />
             </div>
-            <span className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-[#1a0a2e]" />
+            <div className="flex-1 min-w-0">
+              <p className="text-white text-[18px] sm:text-[20px] font-bold leading-none tracking-wide"
+                style={{ fontFamily: "'Playfair Display', serif" }}>Laali</p>
+              <p className="text-white/35 text-[11px] mt-1 font-light truncate">Chatting with {name} 💕</p>
+            </div>
+            <span className="hidden xs:inline-flex sm:inline-flex text-[11px] px-3 py-[5px] rounded-full whitespace-nowrap font-light text-[rgba(255,160,180,0.7)] border border-[rgba(200,60,100,0.2)] bg-[rgba(200,60,100,0.10)]">
+              🏔️ {name}
+            </span>
           </div>
-          <div className="flex-1">
-            <p className="text-xl font-extrabold bg-gradient-to-r from-pink-300 to-purple-300 bg-clip-text text-transparent">
-              Laali
-            </p>
-            <p className="text-[11px] text-pink-200/50">
-              Chatting with {name} 💕
-            </p>
-          </div>
-          <span className="text-[11px] px-3 py-1 rounded-full bg-orange-400/10 border border-orange-400/20 text-orange-200/70">
-            🏔️ Uttarakhand
-          </span>
-        </div>
 
-        {/* messages */}
-        <div className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-3">
-          {messages.map((m, i) => (
-            <div key={i} className={`flex items-end gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-              {m.role === "model" && (
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center text-sm flex-shrink-0">
-                  🌸
+          {/* MESSAGES */}
+          <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-4 sm:py-[18px] flex flex-col gap-3">
+            {messages.map((m, i) => (
+              <div key={i} className={`flex items-end gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                {m.role === "model" && (
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden flex-shrink-0 border border-[rgba(200,60,100,0.3)]"
+                    style={{ boxShadow: "0 0 10px rgba(200,60,100,0.2)" }}>
+                    <Avatar className="w-full h-full" />
+                  </div>
+                )}
+                <p className={`max-w-[80%] sm:max-w-[75%] px-3 py-2 sm:px-[15px] sm:py-[11px] text-sm sm:text-[14.5px] leading-relaxed break-words font-light
+                  ${m.role === "user"
+                    ? "text-white rounded-[16px_4px_16px_16px] border border-white/[0.08]"
+                    : "text-white/80 rounded-[4px_16px_16px_16px] border border-white/[0.07] bg-[#181818]"}`}
+                  style={m.role === "user" ? {
+                    background: "linear-gradient(135deg, #c83c64 0%, #8b1a38 100%)",
+                    boxShadow: "0 4px 20px rgba(200,60,100,0.30)",
+                  } : { boxShadow: "0 2px 12px rgba(0,0,0,0.40)" }}
+                >{m.text}</p>
+              </div>
+            ))}
+
+            {typing && (
+              <div className="flex items-end gap-2">
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden flex-shrink-0 border border-[rgba(200,60,100,0.3)]">
+                  <Avatar className="w-full h-full" />
                 </div>
-              )}
-              <p className={`max-w-[75%] px-4 py-2.5 text-sm leading-relaxed break-words rounded-2xl
-                ${m.role === "user"
-                  ? "bg-gradient-to-br from-pink-500 to-purple-500 text-white rounded-br-sm"
-                  : "bg-white/[0.07] border border-pink-300/10 text-pink-50/90 rounded-bl-sm"
-                }`}>
-                {m.text}
-              </p>
-            </div>
-          ))}
+                <div className="bg-[#181818] border border-white/[0.07] rounded-[4px_16px_16px_16px] px-4 py-[13px] flex gap-[5px] items-center">
+                  {[0, 200, 400].map((d, i) => (
+                    <div key={i} className="dot-pulse w-[7px] h-[7px] rounded-full bg-[rgba(200,60,100,0.7)]"
+                      style={{ animationDelay: `${d}ms` }} />
+                  ))}
+                </div>
+              </div>
+            )}
+            <div ref={bottomRef} />
+          </div>
 
-          {/* typing dots */}
-          {typing && (
-            <div className="flex items-end gap-2">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center text-sm">
-                🌸
-              </div>
-              <div className="bg-white/[0.07] border border-pink-300/10 rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1.5">
-                <span className="w-2 h-2 bg-pink-400/70 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                <span className="w-2 h-2 bg-pink-400/70 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                <span className="w-2 h-2 bg-pink-400/70 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
-              </div>
+          {/* SUGGESTIONS */}
+          {messages.length <= 2 && (
+            <div className="px-3 sm:px-[14px] pb-2 flex flex-wrap gap-[5px]">
+              {SUGGESTIONS.map((s, i) => (
+                <button key={i} onClick={() => sendMessage(s)}
+                  className="text-[11px] sm:text-xs px-3 py-[5px] rounded-full cursor-pointer transition-all
+                    bg-[rgba(200,60,100,0.08)] border border-[rgba(200,60,100,0.18)] text-[rgba(255,160,180,0.7)]
+                    hover:bg-[rgba(200,60,100,0.16)] hover:border-[rgba(200,60,100,0.4)] hover:text-[rgba(255,200,210,0.9)]">
+                  {s}
+                </button>
+              ))}
             </div>
           )}
 
-          <div ref={bottomRef} />
-        </div>
+          {/* ── MUSIC PLAYER ── all logic is inside MusicPlayer */}
+          <MusicPlayer ref={musicRef} lastUserMessage={lastUserMsg} />
 
-        {/* suggestions */}
-        {messages.length <= 2 && (
-          <div className="px-4 pb-3 flex flex-wrap gap-2">
-            {SUGGESTIONS.map((s, i) => (
-              <button key={i} onClick={() => sendMessage(s)}
-                className="text-xs px-3 py-1.5 rounded-full bg-pink-500/10 border border-pink-400/20 text-pink-200/70 hover:bg-pink-500/20 transition cursor-pointer">
-                {s}
-              </button>
-            ))}
+          {/* INPUT */}
+          <div className="px-3 pb-4 pt-2 sm:px-4 sm:pb-[14px] sm:pt-[10px] border-t border-white/[0.05] flex gap-2 sm:gap-[10px] items-center flex-shrink-0 bg-black/20"
+            style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}>
+            <input
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              placeholder="kro yrr apu girlfriend hai baat... 💬"
+              disabled={loading}
+              className="flex-1 bg-[#181818] border border-white/[0.08] rounded-[22px] px-4 py-[10px] sm:px-[18px] sm:py-[11px]
+                text-sm font-light text-white/85 outline-none transition placeholder:text-white/20
+                focus:border-[rgba(200,60,100,0.4)] focus:shadow-[0_0_0_3px_rgba(200,60,100,0.08)]"
+              style={{ caretColor: "#c83c64" }}
+            />
+            <button
+              onClick={() => sendMessage()}
+              disabled={loading || !input.trim()}
+              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-base sm:text-lg flex-shrink-0
+                cursor-pointer transition-all hover:scale-[1.08] active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
+              style={{
+                background: "linear-gradient(135deg, #c83c64 0%, #8b1a38 100%)",
+                boxShadow: "0 4px 18px rgba(200,60,100,0.4)",
+              }}
+            >💌</button>
           </div>
-        )}
 
-        {/* input */}
-        <div className="px-4 pb-5 pt-2 border-t border-pink-500/[0.08] flex gap-3 items-center">
-          <input
-            ref={inputRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            placeholder="Laali se kuch bolo... 💬"
-            disabled={loading}
-            className="flex-1 bg-white/[0.06] border border-pink-400/20 rounded-2xl px-4 py-3 text-sm text-pink-50/90 placeholder-pink-300/30 focus:outline-none focus:border-pink-400/40 transition"
-          />
-          <button
-            onClick={() => sendMessage()}
-            disabled={loading || !input.trim()}
-            className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center text-lg shadow-lg shadow-pink-500/30 hover:scale-105 active:scale-95 transition disabled:opacity-40 cursor-pointer">
-            💌
-          </button>
+          {/* FOOTER */}
+          <p className="text-center pb-2 sm:pb-3 text-[10px] sm:text-[10.5px] font-light text-white/70 tracking-wider flex-shrink-0">
+            Made with 💕 By Krishna Singh Jeena • Powered by Gemini AI
+          </p>
+
         </div>
-
-        <p className="text-center text-[10px] text-pink-400/25 pb-3">
-          Made with 💕 By  Krishna Singh Jeena • Powered by Gemini AI
-        </p>
       </div>
-
-      <style>{`
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(236,72,153,0.2); border-radius: 2px; }
-        input::placeholder { color: rgba(216,180,254,0.3); }
-      `}</style>
-    </div>
+    </>
   );
 }
