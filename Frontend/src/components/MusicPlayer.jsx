@@ -1,23 +1,22 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
-
 const PLAYLIST = [
+    { file: "meri_sahiba.mpeg",    title: "meri sahiba",    artist: "Folk 🏔️" },
   { file: "tum-hi-ho.mp3",        title: "Tum Hi Ho",       artist: "Aashiqui 2" },
   { file: "kesariya.mp3",         title: "Kesariya",         artist: "Brahmastra" },
   { file: "raataan-lambiyan.mp3", title: "Raataan Lambiyan", artist: "Shershaah" },
-  { file: "pahadi-mashup.mp3",    title: "Pahadi Mashup",    artist: "Folk 🏔️" },
 ];
 
 const SONG_KEYWORDS = {
   romantic: "tum-hi-ho.mp3", love: "tum-hi-ho.mp3", pyaar: "tum-hi-ho.mp3",
   kesariya: "kesariya.mp3",
-  pahadi: "pahadi-mashup.mp3", folk: "pahadi-mashup.mp3", mountains: "pahadi-mashup.mp3",
+  pahadi: "meri_sahiba.mpeg", folk: "pahadi-mashup.mp3", mountains: "pahadi-mashup.mp3",
   sad: "raataan-lambiyan.mp3",
 };
 
 const MusicPlayer = forwardRef(({ lastUserMessage }, ref) => {
   const audioRef = useRef(null);
   const [index,   setIndex]   = useState(0);
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(true);
   const [current, setCurrent] = useState(PLAYLIST[0]);
 
   useEffect(() => {
