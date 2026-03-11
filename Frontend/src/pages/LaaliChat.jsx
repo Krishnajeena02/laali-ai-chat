@@ -63,7 +63,7 @@ export default function ChatScreen() {
 
   const bottomRef  = useRef(null);
   const inputRef   = useRef(null);
-  const musicRef   = useRef(null); // ref to MusicPlayer
+  const musicRef   = useRef(null); 
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });

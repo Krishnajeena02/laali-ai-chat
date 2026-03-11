@@ -57,10 +57,8 @@ export default function NameScreen() {
         input::placeholder { color: rgba(255,255,255,0.2); }
       `}</style>
 
-      {/* ✅ Full screen on mobile, centered on desktop */}
       <div className="min-h-screen min-h-[100dvh] bg-[#080808] flex items-center justify-center relative overflow-hidden sm:p-4">
 
-        {/* Blobs — desktop only */}
         <div className="hidden sm:block fixed -top-28 -right-28 w-[420px] h-[420px] rounded-full pointer-events-none z-0"
           style={{ background: "radial-gradient(circle, rgba(200,60,100,0.10) 0%, transparent 70%)" }} />
         <div className="hidden sm:block fixed -bottom-24 -left-24 w-[380px] h-[380px] rounded-full pointer-events-none z-0"
@@ -68,9 +66,7 @@ export default function NameScreen() {
 
         <FloatingHearts />
 
-        {/* ✅ Card
-            Mobile:  full screen, no border radius, scrollable
-            Desktop: centered card with rounded corners */}
+     
         <div
           className="
             relative z-10 flex flex-col items-center w-full bg-[#0f0f0f] border-white/[0.07]
@@ -126,7 +122,6 @@ export default function NameScreen() {
             </p>
           </div>
 
-          {/* Input */}
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -139,7 +134,6 @@ export default function NameScreen() {
             style={{ caretColor: "#c83c64" }}
           />
 
-          {/* Button */}
           <button
             onClick={handleSubmit}
             disabled={!name.trim()}
@@ -153,10 +147,9 @@ export default function NameScreen() {
             Shuru Karo 💌
           </button>
 
-          {/* Footer */}
           <p className="text-[10px] font-light text-white/70 tracking-wider"
             style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
-            Made with 💕 By Krishna Singh Jeena • Powered by Gemini AI
+            Made with 💕 By Krishna Singh Jeena • 
           </p>
 
         </div>
