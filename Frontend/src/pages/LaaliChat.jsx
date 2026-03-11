@@ -9,7 +9,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 const SUGGESTIONS = [
   "Laali, kas chhe tu? 🌸",
-  "Kuch sunao apne gaon ke baare mein 🏔️",
+  "Ke karn chhe 🏔️",
   "Mujhe Kumaoni mein kuch sikho 😄",
   "Aaj din kas go? ☀️",
 ];
@@ -201,7 +201,6 @@ export default function ChatScreen() {
             <div ref={bottomRef} />
           </div>
 
-          {/* SUGGESTIONS */}
           {messages.length <= 2 && (
             <div className="px-3 sm:px-[14px] pb-2 flex flex-wrap gap-[5px]">
               {SUGGESTIONS.map((s, i) => (
@@ -215,10 +214,8 @@ export default function ChatScreen() {
             </div>
           )}
 
-          {/* ── MUSIC PLAYER ── all logic is inside MusicPlayer */}
           <MusicPlayer ref={musicRef} lastUserMessage={lastUserMsg} />
 
-          {/* INPUT */}
           <div className="px-3 pb-4 pt-2 sm:px-4 sm:pb-[14px] sm:pt-[10px] border-t border-white/[0.05] flex gap-2 sm:gap-[10px] items-center flex-shrink-0 bg-black/20"
             style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}>
             <input
@@ -245,9 +242,8 @@ export default function ChatScreen() {
             >💌</button>
           </div>
 
-          {/* FOOTER */}
           <p className="text-center pb-2 sm:pb-3 text-[10px] sm:text-[10.5px] font-light text-white/70 tracking-wider flex-shrink-0">
-            Made with 💕 By Krishna Singh Jeena • Powered by Gemini AI
+            Made with 💕 By Krishna Singh Jeena •
           </p>
 
         </div>
