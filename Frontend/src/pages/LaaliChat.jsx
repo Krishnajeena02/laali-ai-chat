@@ -139,7 +139,7 @@ export default function ChatScreen() {
         ::-webkit-scrollbar-thumb { background: rgba(200,60,100,0.2); border-radius: 2px; }
       `}</style>
 
-      <div className="min-h-screen min-h-[100dvh] bg-[#080808] flex items-center justify-center sm:p-4 relative">
+      <div className="h-[100dvh] overflow-hidden bg-[#080808] flex items-center justify-center sm:p-4 relative">
 
         <div className="fixed -top-28 -right-28 w-[420px] h-[420px] rounded-full pointer-events-none z-0"
           style={{ background: "radial-gradient(circle, rgba(200,60,100,0.10) 0%, transparent 70%)" }} />
