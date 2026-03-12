@@ -154,9 +154,8 @@ export default function ChatScreen() {
           style={{ boxShadow: "0 0 0 1px rgba(200,60,100,0.1), 0 30px 80px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05)" }}
         >
 
-          {/* HEADER */}
           <div className="flex items-center gap-3 px-4 py-3 sm:px-5 sm:py-5 flex-shrink-0 border-b border-white/[0.05]"
-            style={{ background: "linear-gradient(180deg, rgba(200,60,100,0.06) 0%, transparent 100%)" }}>
+            // style={{ background: "linear-gradient(180deg, rgba(200,60,100,0.06) 0%, transparent 100%)" }}>
             <div className="relative flex-shrink-0">
               <img
                 src={laaliImg}
@@ -177,7 +176,6 @@ export default function ChatScreen() {
             </span>
           </div>
 
-          {/* MESSAGES */}
           <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-4 sm:py-[18px] flex flex-col gap-3 relative">
             <span className="sm:hidden"><FloatingHearts /></span>
             {messages.map((m, i) => (
@@ -226,7 +224,6 @@ export default function ChatScreen() {
             <div ref={bottomRef} />
           </div>
 
-          {/* SUGGESTIONS */}
           {messages.length <= 2 && (
             <div className="px-3 sm:px-[14px] pb-2 flex flex-wrap gap-[5px]">
               {SUGGESTIONS.map((s, i) => (
