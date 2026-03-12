@@ -154,7 +154,7 @@ export default function ChatScreen() {
           style={{ boxShadow: "0 0 0 1px rgba(200,60,100,0.1), 0 30px 80px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05)" }}
         >
 
-          <div className="flex items-center gap-3 px-4 py-3 sm:px-5 sm:py-5 flex-shrink-0 border-b border-white/[0.05]"
+          <div className="flex  items-center gap-3 px-4 py-3 sm:px-5 sm:py-5 flex-shrink-0 border-b border-white/[0.05]"
             // style={{ background: "linear-gradient(180deg, rgba(200,60,100,0.06) 0%, transparent 100%)" }}    
             >
             <div className="relative flex-shrink-0">
@@ -226,7 +226,7 @@ export default function ChatScreen() {
           </div>
 
           {messages.length <= 2 && (
-            <div className="px-3 sm:px-[14px] pb-2 flex flex-wrap gap-[5px]">
+            <div className="px-3 bg-black sm:px-[14px] pb-2 flex flex-wrap gap-[5px]">
               {SUGGESTIONS.map((s, i) => (
                 <button key={i} onClick={() => sendMessage(s)}
                   className="text-[11px] sm:text-xs px-3 py-[5px] rounded-full cursor-pointer transition-all
