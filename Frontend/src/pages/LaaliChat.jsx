@@ -177,7 +177,7 @@ export default function ChatScreen() {
             </span>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-4 sm:py-[18px] flex flex-col gap-3 relative">
+          <div className="flex-1 bg-black overflow-y-auto px-3 py-4 sm:px-4 sm:py-[18px] flex flex-col gap-3 relative">
             <span className="sm:hidden"><FloatingHearts /></span>
             {messages.map((m, i) => (
               <div key={i} className={`flex items-end gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
