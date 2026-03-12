@@ -6,7 +6,7 @@ import cors from 'cors'
 import chatRoutes from './routes/chatRoute.js'
 const app = express();
 app.use(cors({
-    origin:"*",
+    origin:process.env.CLIENT_URL || "http://localhost:5174",
     credentials:true
 }))
 app.use(express.json())
