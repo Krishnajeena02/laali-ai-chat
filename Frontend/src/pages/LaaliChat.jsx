@@ -7,8 +7,8 @@ import laaliImg from "../assets/WhatsApp Image 2026-03-08 at 2.10.25 AM (1).jpeg
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 const SONGS = [
-  "/music/tum-hi-ho.mp3",
-  "/music/kesariya.mp3",
+  "/music/bg_tune.mpeg",
+  "/music/meri_sahiba.mpeg",
   "/music/raataan-lambiyan.mp3",
   "/music/pahadi-mashup.mp3",
   "/music/bekhayali.mp3",
@@ -109,7 +109,7 @@ export default function ChatScreen() {
     } catch {
       setMessages((prev) => [...prev, {
         role: "model",
-        text: "Arre! krishna iduge baat kariye karau ab ni karun mi baat 😅",
+        text: "Arre! krishna ne iduge baat kariye karau ab ni karun mi baat 😅",
       }]);
     } finally {
       setTyping(false);
@@ -139,7 +139,7 @@ export default function ChatScreen() {
         ::-webkit-scrollbar-thumb { background: rgba(200,60,100,0.2); border-radius: 2px; }
       `}</style>
 
-      <div className="min-h-screen min-h-[100dvh] bg-[#080808] flex items-center justify-center sm:p-4 relative">
+      <div className="min-h-screen min-h-[100dvh] bg-[#080808] flex items-center justify-center sm:p-4 relative overflow-hidden">
 
         <div className="hidden sm:block fixed -top-28 -right-28 w-[420px] h-[420px] rounded-full pointer-events-none z-0"
           style={{ background: "radial-gradient(circle, rgba(200,60,100,0.10) 0%, transparent 70%)" }} />
@@ -259,15 +259,16 @@ export default function ChatScreen() {
               onClick={() => sendMessage()}
               disabled={loading || !input.trim()}
               className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-base sm:text-lg flex-shrink-0
-                cursor-pointer transition-all hover:scale-[1.08] active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
+                cursor-pointer  transition-all hover:scale-[1.08] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
-                background: "linear-gradient(135deg, #c83c64 0%, #8b1a38 100%)",
-                boxShadow: "0 4px 18px rgba(200,60,100,0.4)",
+                color:"red",
+                background: "white",
+                // boxShadow: "0 4px 18px rgba(200,60,100,0.4)",
               }}
-            >💌</button>
+            >❤</button>
           </div>
 
-          <p className="text-center pb-2 sm:pb-3 text-[10px] sm:text-[10.5px] font-light text-white/70 tracking-wider flex-shrink-0">
+          <p className="text-center  sm:pb-3 text-[11px] sm:text-[10.5px] font-light text-white tracking-wider flex-shrink-0">
             Made with 💕 By Krishna Singh Jeena •
           </p>
 
