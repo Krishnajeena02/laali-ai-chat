@@ -1,5 +1,7 @@
 {
-  "rewrites": [
-    { "source": "/((?!assets|music|favicon.ico).*)", "destination": "/index.html" }
+  "routes": [
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/music/(.*)", "dest": "/music/$1" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
