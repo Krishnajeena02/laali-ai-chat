@@ -140,16 +140,17 @@ export default function NameScreen() {
             className="w-full py-3 rounded-[22px] text-sm font-semibold text-white transition-all mb-5
               hover:scale-[1.03] active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
             style={{
+              color:"pink",
               background: "linear-gradient(135deg, #c83c64 0%, #8b1a38 100%)",
               boxShadow: "0 4px 18px rgba(200,60,100,0.4)",
             }}
           >
-            Shuru Karo 💌
+            aao pe ❤
           </button>
 
-          <p className="text-[10px] font-light text-white/70 tracking-wider"
+          <p className="text-[11px] font-light text-white tracking-wider"
             style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
-            Made with 💕 By Krishna Singh Jeena • 
+            Made with 💕 By Krishna Singh Jeena 
           </p>
 
         </div>

@@ -1,16 +1,23 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import laaliImg from "../assets/WhatsApp Image 2026-03-08 at 2.10.25 AM (1).jpeg";
-import MusicPlayer from "../components/MusicPlayer";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+
+const SONGS = [
+  "/music/bg_tune.mpeg",
+  "/music/meri_sahiba.mpeg",
+  "/music/raataan-lambiyan.mp3",
+  "/music/pahadi-mashup.mp3",
+  "/music/bekhayali.mp3",
+  "/music/hawayein.mp3",
+];
 
 const SUGGESTIONS = [
   "Laali, kas chhe tu? 🌸",
   "Ke karn chhe 🏔️",
-  "Mujhe Kumaoni mein kuch sikho 😄",
   "Aaj din kas go? ☀️",
 ];
 
@@ -37,15 +44,6 @@ function FloatingHearts() {
   );
 }
 
-function Avatar({ className = "" }) {
-  return (
-    <img src={laaliImg} alt="Laali"
-      className={`rounded-full object-cover object-top block ${className}`}
-      onError={(e) => { e.target.src = "https://ui-avatars.com/api/?name=Laali&background=c83c64&color=fff&size=100"; }}
-    />
-  );
-}
-
 export default function ChatScreen() {
   const navigate = useNavigate();
   const name = localStorage.getItem("laali_user");
@@ -56,14 +54,41 @@ export default function ChatScreen() {
     role: "model",
     text: `hey ${name} Laata 🌸 Main Laali chhu bageshwer bati 🏔️ tu kak chhe, kacchu ghar ke chhu dhinay? 😊`,
   }]);
-  const [input, setInput]       = useState("");
-  const [loading, setLoading]   = useState(false);
-  const [typing, setTyping]     = useState(false);
-  const [lastUserMsg, setLastUserMsg] = useState("");
+  const [input,   setInput]   = useState("");
+  const [loading, setLoading] = useState(false);
+  const [typing,  setTyping]  = useState(false);
 
-  const bottomRef  = useRef(null);
-  const inputRef   = useRef(null);
-  const musicRef   = useRef(null); 
+  const bottomRef = useRef(null);
+  const inputRef  = useRef(null);
+  const audio     = useRef(null);
+  const index     = useRef(0);
+  const started   = useRef(false);
+
+  useEffect(() => {
+    audio.current = new Audio(SONGS[0]);
+    audio.current.volume = 0.15;
+
+    audio.current.addEventListener("ended", () => {
+      index.current = (index.current + 1) % SONGS.length;
+      audio.current.src = SONGS[index.current];
+      audio.current.play();
+    });
+
+    const start = () => {
+      if (started.current) return;
+      started.current = true;
+      audio.current.play().catch(() => {});
+    };
+
+    document.addEventListener("click", start);
+    document.addEventListener("touchstart", start);
+
+    return () => {
+      audio.current.pause();
+      document.removeEventListener("click", start);
+      document.removeEventListener("touchstart", start);
+    };
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -73,11 +98,7 @@ export default function ChatScreen() {
     const msg = text || input.trim();
     if (!msg || loading) return;
 
-    // trigger default music on first interaction
-    musicRef.current?.startMusicOnce();
-
     setMessages((prev) => [...prev, { role: "user", text: msg }]);
-    setLastUserMsg(msg); // passed to MusicPlayer for keyword detection
     setInput("");
     setLoading(true);
     setTyping(true);
@@ -88,7 +109,7 @@ export default function ChatScreen() {
     } catch {
       setMessages((prev) => [...prev, {
         role: "model",
-        text: "Arre! krishna iduge baat kariye karau ab ni karun mi baat 😅",
+        text: "Arre! krishna ne iduge baat kariye karau ab ni karun mi baat 😅",
       }]);
     } finally {
       setTyping(false);
@@ -111,18 +132,7 @@ export default function ChatScreen() {
           0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
           40%            { transform: scale(1); opacity: 1; }
         }
-        @keyframes barBounce1 { from { height: 20%; } to { height: 80%; } }
-        @keyframes barBounce2 { from { height: 40%; } to { height: 100%; } }
-        @keyframes barBounce3 { from { height: 30%; } to { height: 90%; } }
-        @keyframes barBounce4 { from { height: 50%; } to { height: 70%; } }
-        @keyframes nowPlaying {
-          0%   { opacity: 0; transform: translateY(-8px); }
-          15%  { opacity: 1; transform: translateY(0); }
-          80%  { opacity: 1; }
-          100% { opacity: 0; }
-        }
-        .dot-pulse   { animation: dotPulse 1.4s ease-in-out infinite; }
-        .now-playing { animation: nowPlaying 4s ease forwards; }
+        .dot-pulse { animation: dotPulse 1.4s ease-in-out infinite; }
         body { font-family: 'DM Sans', sans-serif; }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -149,7 +159,12 @@ export default function ChatScreen() {
           <div className="flex items-center gap-3 px-4 py-3 sm:px-5 sm:py-5 flex-shrink-0 border-b border-white/[0.05]"
             style={{ background: "linear-gradient(180deg, rgba(200,60,100,0.06) 0%, transparent 100%)" }}>
             <div className="relative flex-shrink-0">
-              <Avatar className="w-10 h-10 sm:w-[50px] sm:h-[50px] border-[1.5px] border-[rgba(200,60,100,0.4)]" />
+              <img
+                src={laaliImg}
+                alt="Laali"
+                className="w-10 h-10 sm:w-[50px] sm:h-[50px] rounded-full object-cover object-top block border-[1.5px] border-[rgba(200,60,100,0.4)]"
+                onError={(e) => { e.target.src = "https://ui-avatars.com/api/?name=Laali&background=c83c64&color=fff&size=100"; }}
+              />
               <span className="absolute bottom-0.5 right-0.5 w-[9px] h-[9px] sm:w-[11px] sm:h-[11px] bg-[#3ecf6a] rounded-full border-2 border-[#0f0f0f]"
                 style={{ boxShadow: "0 0 6px #3ecf6a" }} />
             </div>
@@ -170,7 +185,12 @@ export default function ChatScreen() {
                 {m.role === "model" && (
                   <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden flex-shrink-0 border border-[rgba(200,60,100,0.3)]"
                     style={{ boxShadow: "0 0 10px rgba(200,60,100,0.2)" }}>
-                    <Avatar className="w-full h-full" />
+                    <img
+                      src={laaliImg}
+                      alt="Laali"
+                      className="w-full h-full rounded-full object-cover object-top block"
+                      onError={(e) => { e.target.src = "https://ui-avatars.com/api/?name=Laali&background=c83c64&color=fff&size=100"; }}
+                    />
                   </div>
                 )}
                 <p className={`max-w-[80%] sm:max-w-[75%] px-3 py-2 sm:px-[15px] sm:py-[11px] text-sm sm:text-[14.5px] leading-relaxed break-words font-light
@@ -188,7 +208,12 @@ export default function ChatScreen() {
             {typing && (
               <div className="flex items-end gap-2">
                 <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden flex-shrink-0 border border-[rgba(200,60,100,0.3)]">
-                  <Avatar className="w-full h-full" />
+                  <img
+                    src={laaliImg}
+                    alt="Laali"
+                    className="w-full h-full rounded-full object-cover object-top block"
+                    onError={(e) => { e.target.src = "https://ui-avatars.com/api/?name=Laali&background=c83c64&color=fff&size=100"; }}
+                  />
                 </div>
                 <div className="bg-[#181818] border border-white/[0.07] rounded-[4px_16px_16px_16px] px-4 py-[13px] flex gap-[5px] items-center">
                   {[0, 200, 400].map((d, i) => (
@@ -201,6 +226,7 @@ export default function ChatScreen() {
             <div ref={bottomRef} />
           </div>
 
+          {/* SUGGESTIONS */}
           {messages.length <= 2 && (
             <div className="px-3 sm:px-[14px] pb-2 flex flex-wrap gap-[5px]">
               {SUGGESTIONS.map((s, i) => (
@@ -214,8 +240,7 @@ export default function ChatScreen() {
             </div>
           )}
 
-          <MusicPlayer ref={musicRef} lastUserMessage={lastUserMsg} />
-
+          {/* INPUT */}
           <div className="px-3 pb-4 pt-2 sm:px-4 sm:pb-[14px] sm:pt-[10px] border-t border-white/[0.05] flex gap-2 sm:gap-[10px] items-center flex-shrink-0 bg-black/20"
             style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}>
             <input
@@ -234,15 +259,16 @@ export default function ChatScreen() {
               onClick={() => sendMessage()}
               disabled={loading || !input.trim()}
               className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-base sm:text-lg flex-shrink-0
-                cursor-pointer transition-all hover:scale-[1.08] active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
+                cursor-pointer  transition-all hover:scale-[1.08] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
-                background: "linear-gradient(135deg, #c83c64 0%, #8b1a38 100%)",
-                boxShadow: "0 4px 18px rgba(200,60,100,0.4)",
+                color:"red",
+                background: "white",
+                // boxShadow: "0 4px 18px rgba(200,60,100,0.4)",
               }}
-            >💌</button>
+            >❤</button>
           </div>
 
-          <p className="text-center pb-2 sm:pb-3 text-[10px] sm:text-[10.5px] font-light text-white/70 tracking-wider flex-shrink-0">
+          <p className="text-center pb-2 sm:pb-3 text-[11px] sm:text-[10.5px] font-light text-white tracking-wider flex-shrink-0">
             Made with 💕 By Krishna Singh Jeena •
           </p>
 
