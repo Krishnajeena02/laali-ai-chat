@@ -155,7 +155,8 @@ export default function ChatScreen() {
         >
 
           <div className="flex items-center gap-3 px-4 py-3 sm:px-5 sm:py-5 flex-shrink-0 border-b border-white/[0.05]"
-            // style={{ background: "linear-gradient(180deg, rgba(200,60,100,0.06) 0%, transparent 100%)" }}>
+            // style={{ background: "linear-gradient(180deg, rgba(200,60,100,0.06) 0%, transparent 100%)" }}    
+            >
             <div className="relative flex-shrink-0">
               <img
                 src={laaliImg}
