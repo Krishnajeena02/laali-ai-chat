@@ -7,8 +7,8 @@ import laaliImg from "../assets/WhatsApp Image 2026-03-08 at 2.10.25 AM (1).jpeg
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 const SONGS = [
-  "/music/bg_tune.mpeg",
-  "/music/meri_sahiba.mpeg",
+  "/music/tum-hi-ho.mp3",
+  "/music/kesariya.mp3",
   "/music/raataan-lambiyan.mp3",
   "/music/pahadi-mashup.mp3",
   "/music/bekhayali.mp3",
@@ -31,7 +31,7 @@ function FloatingHearts() {
     opacity: i % 3 === 0 ? 0.12 : 0.07,
   }));
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
       {hearts.map((h) => (
         <div key={h.id} style={{
           position: "absolute", left: h.left, bottom: "-30px",
@@ -109,7 +109,7 @@ export default function ChatScreen() {
     } catch {
       setMessages((prev) => [...prev, {
         role: "model",
-        text: "Arre! krishna ne iduge baat kariye karau ab ni karun mi baat 😅",
+        text: "Arre! krishna iduge baat kariye karau ab ni karun mi baat 😅",
       }]);
     } finally {
       setTyping(false);
@@ -139,15 +139,14 @@ export default function ChatScreen() {
         ::-webkit-scrollbar-thumb { background: rgba(200,60,100,0.2); border-radius: 2px; }
       `}</style>
 
-      <div className="min-h-screen min-h-[100dvh] bg-[#080808] flex items-center justify-center sm:p-4 relative overflow-hidden">
+      <div className="min-h-screen min-h-[100dvh] bg-[#080808] flex items-center justify-center sm:p-4 relative">
 
-        <div className="hidden sm:block fixed -top-28 -right-28 w-[420px] h-[420px] rounded-full pointer-events-none z-0"
+        <div className="fixed -top-28 -right-28 w-[420px] h-[420px] rounded-full pointer-events-none z-0"
           style={{ background: "radial-gradient(circle, rgba(200,60,100,0.10) 0%, transparent 70%)" }} />
-        <div className="hidden sm:block fixed -bottom-24 -left-24 w-[380px] h-[380px] rounded-full pointer-events-none z-0"
+        <div className="fixed -bottom-24 -left-24 w-[380px] h-[380px] rounded-full pointer-events-none z-0"
           style={{ background: "radial-gradient(circle, rgba(160,40,80,0.08) 0%, transparent 70%)" }} />
 
-        <FloatingHearts />
-
+        <span className="hidden sm:block"><FloatingHearts /></span>
         <div
           className="relative z-10 w-full flex flex-col bg-[#0f0f0f] border-white/[0.07]
             h-[100dvh] rounded-none border-0
@@ -179,7 +178,8 @@ export default function ChatScreen() {
           </div>
 
           {/* MESSAGES */}
-          <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-4 sm:py-[18px] flex flex-col gap-3">
+          <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-4 sm:py-[18px] flex flex-col gap-3 relative">
+            <span className="sm:hidden"><FloatingHearts /></span>
             {messages.map((m, i) => (
               <div key={i} className={`flex items-end gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                 {m.role === "model" && (
@@ -259,7 +259,7 @@ export default function ChatScreen() {
               onClick={() => sendMessage()}
               disabled={loading || !input.trim()}
               className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-base sm:text-lg flex-shrink-0
-                cursor-pointer  transition-all hover:scale-[1.08] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                cursor-pointer transition-all hover:scale-[1.08] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 color:"red",
                 background: "white",
@@ -268,8 +268,8 @@ export default function ChatScreen() {
             >❤</button>
           </div>
 
-          <p className="text-center  sm:pb-3 text-[11px] sm:text-[10.5px] font-light text-white tracking-wider flex-shrink-0">
-            Made with 💕 By Krishna Singh Jeena •
+          <p className="text-center pb-2 sm:pb-3 text-[11px] sm:text-[10.5px] font-light text-white tracking-wider flex-shrink-0">
+            Made with <span className="text-red-500 ">❤</span> By Krishna Singh Jeena •
           </p>
 
         </div>
