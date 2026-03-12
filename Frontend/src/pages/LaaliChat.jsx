@@ -268,7 +268,7 @@ export default function ChatScreen() {
             >❤</button>
           </div>
 
-          <p className="text-center pb-2 sm:pb-3 text-[11px] sm:text-[10.5px] font-light text-white tracking-wider flex-shrink-0">
+          <p className="text-center  sm:pb-3 text-[11px] sm:text-[10.5px] font-light text-white tracking-wider flex-shrink-0">
             Made with 💕 By Krishna Singh Jeena •
           </p>
 
