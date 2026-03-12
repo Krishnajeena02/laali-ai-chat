@@ -109,7 +109,7 @@ export default function ChatScreen() {
     } catch {
       setMessages((prev) => [...prev, {
         role: "model",
-        text: "Arre! krishna iduge baat kariye karau ab ni karun mi baat 😅",
+        text: "Arre! krishna ne iduge baat kariye karau ab ni karun mi baat 😅",
       }]);
     } finally {
       setTyping(false);
