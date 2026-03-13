@@ -8,7 +8,6 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 const SONGS = [
   "/music/bg_tune.mpeg",
-  
 ];
 
 const SUGGESTIONS = [
@@ -45,6 +44,19 @@ export default function ChatScreen() {
   const name = localStorage.getItem("laali_user");
 
   useEffect(() => { if (!name) navigate("/"); }, [name, navigate]);
+
+  const [lang, setLang] = useState("kumaoni");
+
+  const switchLang = (l) => {
+    if (l === lang) return;
+    setLang(l);
+    setMessages([{
+      role: "model",
+      text: l === "hindi"
+        ? `Arre ${name} 🌸 Main Laali hoon Bageshwar se 🏔️ Kaise ho tum? Kuch baat karo na 😊`
+        : `hey ${name} Laata 🌸 Main Laali chhu bageshwer bati 🏔️ tu kak chhe, kacchu ghar ke chhu dhinay? 😊`,
+    }]);
+  };
 
   const [messages, setMessages] = useState([{
     role: "model",
@@ -100,7 +112,7 @@ export default function ChatScreen() {
     setTyping(true);
 
     try {
-      const res = await axios.post(`${API_URL}/api/chat`, { name, message: msg });
+      const res = await axios.post(`${API_URL}/api/chat`, { name, message: msg, lang });
       setMessages((prev) => [...prev, { role: "model", text: res.data.reply }]);
     } catch {
       setMessages((prev) => [...prev, {
@@ -150,9 +162,8 @@ export default function ChatScreen() {
           style={{ boxShadow: "0 0 0 1px rgba(200,60,100,0.1), 0 30px 80px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05)" }}
         >
 
-          <div className="flex  items-center gap-3 px-4 py-3 sm:px-5 sm:py-5 flex-shrink-0 border-b border-white/[0.05]"
-            // style={{ background: "linear-gradient(180deg, rgba(200,60,100,0.06) 0%, transparent 100%)" }}    
-            >
+          {/* HEADER */}
+          <div className="flex items-center gap-3 px-4 py-3 sm:px-5 sm:py-5 flex-shrink-0 border-b border-white/[0.05]">
             <div className="relative flex-shrink-0">
               <img
                 src={laaliImg}
@@ -168,11 +179,40 @@ export default function ChatScreen() {
                 style={{ fontFamily: "'Playfair Display', serif" }}>Laali</p>
               <p className="text-white/35 text-[11px] mt-1 font-light truncate">Chatting with {name} 💕</p>
             </div>
-            <span className="hidden xs:inline-flex sm:inline-flex text-[11px] px-3 py-[5px] rounded-full whitespace-nowrap font-light text-[rgba(255,160,180,0.7)] border border-[rgba(200,60,100,0.2)] bg-[rgba(200,60,100,0.10)]">
-              🏔️ {name}
-            </span>
+
+            {/* LANGUAGE TOGGLE + NAME BADGE */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {/* Lang toggle pill */}
+              <div className="flex items-center rounded-full border border-[rgba(200,60,100,0.2)] bg-[rgba(200,60,100,0.06)] p-[3px] gap-[2px]">
+                <button
+                  onClick={() => switchLang("kumaoni")}
+                  className="text-[10px] px-[9px] py-[3px] rounded-full transition-all font-medium"
+                  style={lang === "kumaoni" ? {
+                    background: "linear-gradient(135deg, #c83c64, #8b1a38)",
+                    color: "#fff",
+                    boxShadow: "0 2px 8px rgba(200,60,100,0.4)",
+                  } : { color: "rgba(255,160,180,0.5)" }}
+                >
+                  🏔️ Kumaoni
+                </button>
+                <button
+                  onClick={() => switchLang("hindi")}
+                  className="text-[10px] px-[9px] py-[3px] rounded-full transition-all font-medium"
+                  style={lang === "hindi" ? {
+                    background: "linear-gradient(135deg, #c83c64, #8b1a38)",
+                    color: "#fff",
+                    boxShadow: "0 2px 8px rgba(200,60,100,0.4)",
+                  } : { color: "rgba(255,160,180,0.5)" }}
+                >
+                  🇮🇳 Hindi
+                </button>
+              </div>
+
+
+            </div>
           </div>
 
+          {/* MESSAGES */}
           <div className="flex-1 bg-black overflow-y-auto px-3 py-4 sm:px-4 sm:py-[18px] flex flex-col gap-3 relative">
             <span className="sm:hidden"><FloatingHearts /></span>
             {messages.map((m, i) => (
@@ -221,6 +261,7 @@ export default function ChatScreen() {
             <div ref={bottomRef} />
           </div>
 
+          {/* SUGGESTIONS */}
           {messages.length <= 2 && (
             <div className="px-3 bg-black sm:px-[14px] pb-2 flex flex-wrap gap-[5px]">
               {SUGGESTIONS.map((s, i) => (
@@ -254,16 +295,12 @@ export default function ChatScreen() {
               disabled={loading || !input.trim()}
               className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-base sm:text-lg flex-shrink-0
                 cursor-pointer transition-all hover:scale-[1.08] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{
-                color:"red",
-                background: "white",
-                // boxShadow: "0 4px 18px rgba(200,60,100,0.4)",
-              }}
+              style={{ color: "red", background: "white" }}
             >❤</button>
           </div>
 
           <p className="text-center pb-2 sm:pb-3 text-[11px] sm:text-[10.5px] font-light text-white tracking-wider flex-shrink-0">
-            Made with <span className="text-red-500 ">❤</span> By Krishna Singh Jeena •
+            Made with <span style={{ color: "red" }}>❤</span> By Krishna Singh Jeena •
           </p>
 
         </div>
