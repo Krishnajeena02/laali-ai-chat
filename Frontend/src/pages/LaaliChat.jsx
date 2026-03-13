@@ -7,12 +7,8 @@ import laaliImg from "../assets/WhatsApp Image 2026-03-08 at 2.10.25 AM (1).jpeg
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 const SONGS = [
-  "/music/tum-hi-ho.mp3",
-  "/music/kesariya.mp3",
-  "/music/raataan-lambiyan.mp3",
-  "/music/pahadi-mashup.mp3",
-  "/music/bekhayali.mp3",
-  "/music/hawayein.mp3",
+  "/music/bg_tune.mpeg",
+  
 ];
 
 const SUGGESTIONS = [
