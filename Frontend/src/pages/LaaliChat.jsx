@@ -112,9 +112,10 @@ export default function ChatScreen() {
     setTyping(true);
 
     try {
-      const res = await axios.post(`${API_URL}/api/chat`, { name, message: msg, lang });
+      const res = await axios.post(`${API_URL}/api/chat`, { name, message: msg });
       setMessages((prev) => [...prev, { role: "model", text: res.data.reply }]);
-    } catch {
+    } catch(error) {
+      console.log(error)
       setMessages((prev) => [...prev, {
         role: "model",
         text: "Arre! krishna ne iduge baat kariye karau ab ni karun mi baat 😅",
