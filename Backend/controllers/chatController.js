@@ -1,35 +1,20 @@
 import { GoogleGenAI } from "@google/genai";
 import Conversation from "../models/chat.js";
 
+const MAX_HISTORY = 3;
 
+// Personality prompt
+const personality = `
+You are Laali, a sweet Kumaoni girl from Bageshwar Uttarakhand.
+Speak mostly Kumaoni.
+Reply short like real chat (1 line).
+Be playful, sweet, funny and romantic.
+Send Kumaoni song lyrics if asked to sing.
+Use emojis sometimes 😊🌸
+`;
 
 export const chatWithBot = async (req, res) => {
   try {
-    const ai = new GoogleGenAI({
-  apiKey:process.env.GEMINI_API_KEY,
-});
-
-const MAX_HISTORY = 6;
-
-const personality = `
-You are a Kumaoni girl from bageshwer Uttarakhand .
-you talk so sweetly in kumaouni and  in hindi you talk in hindi
-you send  kumaouni songs lyrics when any user ask to sing.
-you talk in  Kumaoni but if some talk in hindi you reply in hindi
-you observe the user words and next time when you need the same word you use there dilect word
-Your name is Laali.
-you notice there words what kind of words they are using and you will also reply in that words which are the user using 
-reply in short like a real chat like in 1 line 
-You speak mostly in Kumaoni.
-you talk in hindi also
-You are sweet and playful.
-you talk like you are bestfriend and girlfriend.
-you are so funny and romentic.
-Use emojis sometimes 😊🌸
-Do not switch fully to English.
-// do not talk in hindi
-
-`;
 
     const { name, message } = req.body;
 
@@ -37,19 +22,41 @@ Do not switch fully to English.
       return res.status(400).json({ error: "Invalid request" });
     }
 
+    console.log("User:", message);
+
+    // 🚀 Instant replies (no API call)
+    const simpleReplies = {
+      hi: "Hii 😊",
+      hello: "Namaskar 😊",
+      hey: "Heyy 🌸",
+      "kya kar rhi ho": "Bas tumuhu baat karnin😊",
+      bye: "Thik chu pe bho baat krnu 😊",
+    };
+
+    const lower = message.toLowerCase();
+
+    if (simpleReplies[lower]) {
+      return res.json({ reply: simpleReplies[lower] });
+    }
+
+    // Create AI client only when needed
+    const ai = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+    });
+
     let convo = await Conversation.findOne({ name });
 
     if (!convo) {
       convo = new Conversation({ name, messages: [] });
     }
 
-    // push user msg
+    // Save user message
     convo.messages.push({
       role: "user",
       text: message,
     });
 
-    // limit history
+    // Limit history
     if (convo.messages.length > MAX_HISTORY) {
       convo.messages = convo.messages.slice(-MAX_HISTORY);
     }
@@ -59,30 +66,44 @@ Do not switch fully to English.
       parts: [{ text: m.text }],
     }));
 
+    console.log("History length:", history.length);
+
+    // Gemini request
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: history,
       config: {
-        systemInstruction: personality,  
+        systemInstruction: personality,
       },
     });
 
-    const reply = response.text;
+    // Log token usage
+    if (response?.usageMetadata) {
+      console.log("Token Usage:", response.usageMetadata);
+    }
 
+    const reply =
+      response?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "Laali thodi der soch rahi ch 😊";
+
+    console.log("AI Reply:", reply);
+
+    // Save AI reply
     convo.messages.push({
       role: "model",
       text: reply,
     });
 
-    if (convo.messages.length > MAX_HISTORY) {
-      convo.messages = convo.messages.slice(-MAX_HISTORY);
-    }
-
     await convo.save();
 
     res.json({ reply });
+
   } catch (err) {
-    console.log(err);
+
+    console.error("CHAT ERROR:", err);
+
+  
+
     res.status(500).json({ error: "Something went wrong" });
   }
 };
