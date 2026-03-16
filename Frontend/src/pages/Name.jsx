@@ -57,7 +57,7 @@ export default function NameScreen() {
         input::placeholder { color: rgba(255,255,255,0.2); }
       `}</style>
 
-      <div className="min-h-screen min-h-[100dvh] bg-[#080808] flex items-center justify-center relative overflow-hidden sm:p-4">
+      <div className="h-[100dvh] overflow-hidden bg-[#080808] flex items-center justify-center relative overflow-hidden sm:p-4">
 
         <div className="hidden sm:block fixed -top-28 -right-28 w-[420px] h-[420px] rounded-full pointer-events-none z-0"
           style={{ background: "radial-gradient(circle, rgba(200,60,100,0.10) 0%, transparent 70%)" }} />
@@ -118,7 +118,7 @@ export default function NameScreen() {
               Naam kichhu tumar 💕
             </p>
             <p className="text-xs mt-1 font-light text-white/50">
-              aao 2-4 fasak marnu 🌹
+              aao 2-4 fasak marnu
             </p>
           </div>
 
