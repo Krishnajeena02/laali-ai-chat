@@ -3,6 +3,7 @@ dotenv.config()
 import connectDb from './config/db.js'
 import express from 'express'
 import cors from 'cors'
+import {startKeepAlive} from '.keepAlive.js'
 import chatRoutes from './routes/chatRoute.js'
 const app = express();
 app.use(
@@ -17,7 +18,8 @@ app.use("/api/chat", chatRoutes);
 app.get("/",(req,res)=>{
     res.send("route working")
 })
-
+app.get("/health", (req, res) => res.json({ status: "ok" }));
 app.listen(3001,()=>{
     console.log('server is running on port 3001')
+    startKeepAlive();
 })
