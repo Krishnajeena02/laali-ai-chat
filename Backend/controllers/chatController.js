@@ -67,8 +67,7 @@ export const chatWithBot = async (req, res) => {
     }
 
     const reply =
-      response?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "Laali thodi der soch rahi ch 😊";
+      response?.candidates?.[0]?.content?.parts?.[0]?.text
 
     console.log("AI Reply:", reply);
 
