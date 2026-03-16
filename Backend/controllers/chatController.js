@@ -3,7 +3,6 @@ import Conversation from "../models/chat.js";
 
 const MAX_HISTORY = 3;
 
-// Personality prompt
 const personality = `
 You are Laali, a sweet Kumaoni girl from Bageshwar Uttarakhand.
 Speak mostly Kumaoni.
@@ -24,7 +23,6 @@ export const chatWithBot = async (req, res) => {
 
     console.log("User:", message);
 
-    // 🚀 Instant replies (no API call)
     const simpleReplies = {
       hi: "Hii 😊",
       hello: "Namaskar 😊",
@@ -39,24 +37,13 @@ export const chatWithBot = async (req, res) => {
       return res.json({ reply: simpleReplies[lower] });
     }
 
-    // Create AI client only when needed
-    const ai = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY,
-    });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     let convo = await Conversation.findOne({ name });
+    if (!convo) convo = new Conversation({ name, messages: [] });
 
-    if (!convo) {
-      convo = new Conversation({ name, messages: [] });
-    }
+    convo.messages.push({ role: "user", text: message });
 
-    // Save user message
-    convo.messages.push({
-      role: "user",
-      text: message,
-    });
-
-    // Limit history
     if (convo.messages.length > MAX_HISTORY) {
       convo.messages = convo.messages.slice(-MAX_HISTORY);
     }
@@ -68,16 +55,12 @@ export const chatWithBot = async (req, res) => {
 
     console.log("History length:", history.length);
 
-    // Gemini request
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-1.5-flash",
       contents: history,
-      config: {
-        systemInstruction: personality,
-      },
+      config: { systemInstruction: personality },
     });
 
-    // Log token usage
     if (response?.usageMetadata) {
       console.log("Token Usage:", response.usageMetadata);
     }
@@ -88,22 +71,14 @@ export const chatWithBot = async (req, res) => {
 
     console.log("AI Reply:", reply);
 
-    // Save AI reply
-    convo.messages.push({
-      role: "model",
-      text: reply,
-    });
+    convo.messages.push({ role: "model", text: reply });
 
     await convo.save();
 
     res.json({ reply });
 
   } catch (err) {
-
     console.error("CHAT ERROR:", err);
-
-  
-
     res.status(500).json({ error: "Something went wrong" });
   }
 };
