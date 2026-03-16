@@ -122,6 +122,7 @@ export default function ChatScreen() {
     } finally {
       setTyping(false);
       setLoading(false);
+      setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
 
@@ -179,9 +180,7 @@ export default function ChatScreen() {
               <p className="text-white/35 text-[11px] mt-1 font-light truncate">Chatting with {name} 💕</p>
             </div>
 
-            {/* LANGUAGE TOGGLE + NAME BADGE */}
             <div className="flex items-center gap-2 flex-shrink-0">
-              {/* Lang toggle pill */}
               <div className="flex items-center rounded-full border border-[rgba(200,60,100,0.2)] bg-[rgba(200,60,100,0.06)] p-[3px]">
                 <button
                   onClick={() => switchLang("kumaoni")}
