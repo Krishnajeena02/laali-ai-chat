@@ -112,10 +112,9 @@ export default function ChatScreen() {
     setTyping(true);
 
     try {
-      const res = await axios.post(`${API_URL}/api/chat`, { name, message: msg });
+      const res = await axios.post(`${API_URL}/api/chat`, { name, message: msg, lang });
       setMessages((prev) => [...prev, { role: "model", text: res.data.reply }]);
-    } catch(error) {
-      console.log(error)
+    } catch {
       setMessages((prev) => [...prev, {
         role: "model",
         text: "Arre! krishna ne iduge baat kariye karau ab ni karun mi baat 😅",
@@ -123,7 +122,6 @@ export default function ChatScreen() {
     } finally {
       setTyping(false);
       setLoading(false);
-      inputRef.current?.focus();
     }
   };
 
@@ -184,7 +182,7 @@ export default function ChatScreen() {
             {/* LANGUAGE TOGGLE + NAME BADGE */}
             <div className="flex items-center gap-2 flex-shrink-0">
               {/* Lang toggle pill */}
-              <div className="flex items-center rounded-full border border-[rgba(200,60,100,0.2)] bg-[rgba(200,60,100,0.06)] p-[3px] gap-[2px]">
+              <div className="flex items-center rounded-full border border-[rgba(200,60,100,0.2)] bg-[rgba(200,60,100,0.06)] p-[3px]">
                 <button
                   onClick={() => switchLang("kumaoni")}
                   className="text-[10px] px-[9px] py-[3px] rounded-full transition-all font-medium"
@@ -195,17 +193,6 @@ export default function ChatScreen() {
                   } : { color: "rgba(255,160,180,0.5)" }}
                 >
                   🏔️ Kumaoni
-                </button>
-                <button
-                  onClick={() => switchLang("hindi")}
-                  className="text-[10px] px-[9px] py-[3px] rounded-full transition-all font-medium"
-                  style={lang === "hindi" ? {
-                    background: "linear-gradient(135deg, #c83c64, #8b1a38)",
-                    color: "#fff",
-                    boxShadow: "0 2px 8px rgba(200,60,100,0.4)",
-                  } : { color: "rgba(255,160,180,0.5)" }}
-                >
-                  🇮🇳 Hindi
                 </button>
               </div>
 
@@ -285,7 +272,6 @@ export default function ChatScreen() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
               placeholder="kro yrr apu girlfriend hai baat... 💬"
-              disabled={loading}
               className="flex-1 bg-[#181818] border border-white/[0.08] rounded-[22px] px-4 py-[10px] sm:px-[18px] sm:py-[11px]
                 text-sm font-light text-white/85 outline-none transition placeholder:text-white/20
                 focus:border-[rgba(200,60,100,0.4)] focus:shadow-[0_0_0_3px_rgba(200,60,100,0.08)]"
