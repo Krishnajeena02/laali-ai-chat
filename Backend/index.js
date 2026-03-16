@@ -3,7 +3,7 @@ dotenv.config()
 import connectDb from './config/db.js'
 import express from 'express'
 import cors from 'cors'
-import {startKeepAlive} from '/keepAlive.js'
+import {startKeepAlive} from './keepAlive.js'
 import chatRoutes from './routes/chatRoute.js'
 const app = express();
 app.use(
