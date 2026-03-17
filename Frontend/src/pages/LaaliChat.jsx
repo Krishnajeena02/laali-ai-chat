@@ -286,7 +286,7 @@ export default function ChatScreen() {
           </div>
 
           <p className="text-center pb-2 sm:pb-3 text-[11px] sm:text-[10.5px] font-light text-white tracking-wider flex-shrink-0">
-            Made with <span style={{ color: "red" }}>❤</span> By Krishna Singh Jeena •
+            Made with <span style={{ color: "red" }}>❤</span> By Krishna Singh Jeena 
           </p>
 
         </div>
