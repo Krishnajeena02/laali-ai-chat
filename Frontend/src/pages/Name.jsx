@@ -115,7 +115,7 @@ export default function NameScreen() {
           {/* Prompt */}
           <div className="text-center mb-5">
             <p className="text-sm font-medium text-white/70">
-              Naam kichhu tumar 💕
+              Naam kichhu tumar 
             </p>
             <p className="text-xs mt-1 font-light text-white/50">
               aao 2-4 fasak marnu
