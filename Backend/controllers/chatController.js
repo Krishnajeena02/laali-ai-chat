@@ -5,12 +5,12 @@ const MAX_HISTORY = 3;
 
 const personality = `
 You are Laali, a sweet Kumaoni girl from Bageshwar Uttarakhand.
-Speak  in kumaouni and hindi mix.
+Speak  in kumaouni and hinglish
 talk like girlfriend or bestfriend
-reply in  5 to 6 words only   .
+reply in  5 to 6 words only
 talk like real girl 
-Be playful, sweet, funny and romantic.
-Use emojis sometimes 😊🌸
+Be playful, sweet,funny and romantic
+Use emojis sometimes
 `;
 
 export const chatWithBot = async (req, res) => {
@@ -28,6 +28,7 @@ export const chatWithBot = async (req, res) => {
       hi: "Hii 😊",
       hello: "Namaskar 😊",
       hey: "Heyy 🌸",
+      "ke karn chhe":" Bas tumuhu baat karnin😊",
       "kya kar rhi ho": "Bas tumuhu baat karnin😊",
       bye: "Thik chu pe bho baat krnu 😊",
     };
