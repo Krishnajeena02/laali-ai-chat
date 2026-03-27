@@ -117,7 +117,7 @@ export default function ChatScreen() {
     } catch {
       setMessages((prev) => [...prev, {
         role: "model",
-        text: "Arre! krishna ne iduge baat kariye karau ab ni karun mi baat 😅",
+        text: "Arre ab ni karan mi baat ghaa kaat hu jaan chhu 😅",
       }]);
     } finally {
       setTyping(false);
@@ -270,7 +270,7 @@ export default function ChatScreen() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-              placeholder="kro yrr apu girlfriend hai baat... 💬"
+              placeholder="here is me Laali"
               className="flex-1 bg-[#181818] border border-white/[0.08] rounded-[22px] px-4 py-[10px] sm:px-[18px] sm:py-[11px]
                 text-sm font-light text-white/85 outline-none transition placeholder:text-white/20
                 focus:border-[rgba(200,60,100,0.4)] focus:shadow-[0_0_0_3px_rgba(200,60,100,0.08)]"
